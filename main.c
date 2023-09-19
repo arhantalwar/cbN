@@ -57,6 +57,48 @@ bool veri_check(int** board, int player) {
 
 }
 
+bool diag_check1(int** board, int player) {
+
+    bool is_over = false;
+
+    for(int i = 0; i < 3; i++) {
+        if(board[i][i] == player) {
+            is_over = true;
+        } else {
+            is_over = false;
+            break;
+        }
+    }
+
+    if(is_over == true) {
+        return true;
+    }
+
+    return false;
+
+}
+
+bool diag_check2(int** board, int player) {
+
+    bool is_over = false;
+
+    for(int i = 0; i < 3; i++) {
+        if(board[i][2-i] == player) {
+            is_over = true;
+        } else {
+            is_over = false;
+            break;
+        }
+    }
+
+    if(is_over == true) {
+        return true;
+    }
+
+    return false;
+
+}
+
 
 void printBoard(int** board) {
 
@@ -95,21 +137,22 @@ int main() {
     };
 
     int diag_check_board[3][3] = {
-        {1, 0, 0},
+        {1, 0, 1},
         {0, 1, 0},
-        {0, 0, 0},
+        {1, 0, 1},
     };
 
     for(int i = 0; i < 3; i++) {
         for(int j = 0; j < 3; j++) {
-            board[i][j] = veri_check_board[i][j];
+            board[i][j] = diag_check_board[i][j];
         }
     }
 
     bool hori_check_ans = hori_check(board, 1);
     bool veri_check_ans = veri_check(board, 1);
+    bool diag_check_ans = diag_check2(board, 1);
 
-    printf("%d\n", veri_check_ans);
+    printf("%d\n", diag_check_ans);
 
     // FREE THE MEM
     for(int i = 0; i < 3; i++) {
