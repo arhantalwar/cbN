@@ -142,6 +142,21 @@ bool diag_check2(int** board, int player) {
 
 }
 
+// CHECK IF OVER
+bool checkIfOver(int** board, int player) {
+    if(
+            hori_check(board, player) ||
+            veri_check(board, player) ||
+            diag_check1(board, player) ||
+            diag_check2(board, player)
+      ) {
+        return true;
+    }
+
+    return false;
+
+}
+
 void printBoard(int** board) {
 
     for(int i = 0; i < 3; i++) {
@@ -175,7 +190,7 @@ int main() {
     int diag_check_board[3][3] = {
         {-1, -1, -1},
         {-1, -1, -1},
-        {-1, 1, -1},
+        {-1, -1, -1},
     };
 
     for(int i = 0; i < 3; i++) {
@@ -195,9 +210,12 @@ int main() {
 
         BeginDrawing();
 
-        if(IsMouseButtonPressed(0)) {
-            board = playerTurn(mouseOnBoard, board);
-            drawBoard(board);
+
+        if((checkIfOver(board, 1) || checkIfOver(board, 0)) == false) {
+            if(IsMouseButtonPressed(0)) {
+                board = playerTurn(mouseOnBoard, board);
+                drawBoard(board);
+            }
         }
 
         EndDrawing();
