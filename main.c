@@ -26,6 +26,7 @@ void drawBoard(int** board) {
         for(int j = 0; j < 3; j++) {
             if(board[i][j] == -1) {
                 DrawRectangle(i * sqSize, j * sqSize, sqSize, sqSize, RAYWHITE);
+                DrawRectangleLines(i * sqSize, j * sqSize, sqSize, sqSize, BLACK);
             } else if (board[i][j] == 0) {
                 DrawRectangle(i  * sqSize, j * sqSize, sqSize, sqSize, BLUE);
             } else {
