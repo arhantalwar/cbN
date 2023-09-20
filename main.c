@@ -41,11 +41,15 @@ int** playerTurn(int mouseOnBoard, int** board) {
     int y = mouseOnBoard / 3;
 
     if(player_turn == 0) {
-        board[x][y] = 0;
-        player_turn = 1;
+        if(board[x][y] == -1) {
+            board[x][y] = 0;
+            player_turn = 1;
+        }
     } else {
-        board[x][y] = 1;
-        player_turn = 0;
+        if(board[x][y] == -1) {
+            board[x][y] = 1;
+            player_turn = 0;
+        }
     }
 
     return board;
@@ -171,7 +175,7 @@ int main() {
     int diag_check_board[3][3] = {
         {-1, -1, -1},
         {-1, -1, -1},
-        {-1, -1, -1},
+        {-1, 1, -1},
     };
 
     for(int i = 0; i < 3; i++) {
