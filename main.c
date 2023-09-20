@@ -3,8 +3,8 @@
 #include <stdbool.h>
 #include <raylib.h>
 
-#define width 1024
-#define height  720
+#define width 720 // 1024
+#define height 720
 #define sqSize 240
 
 int player_turn = 0; // BLUE PLAYER STARTS FIRST
@@ -29,8 +29,10 @@ void drawBoard(int** board) {
                 DrawRectangleLines(i * sqSize, j * sqSize, sqSize, sqSize, BLACK);
             } else if (board[i][j] == 0) {
                 DrawRectangle(i  * sqSize, j * sqSize, sqSize, sqSize, BLUE);
+                DrawRectangleLines(i * sqSize, j * sqSize, sqSize, sqSize, BLACK);
             } else {
                 DrawRectangle(i * sqSize, j * sqSize, sqSize, sqSize, RED);
+                DrawRectangleLines(i * sqSize, j * sqSize, sqSize, sqSize, BLACK);
             }
         }
     }
