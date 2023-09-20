@@ -3,7 +3,6 @@
 <div align="center">
 
 ![logo](./logo.png)
-A Bot that plays tic tac toe
 
 </div>
 
