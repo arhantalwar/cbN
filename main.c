@@ -1,14 +1,15 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <raylib.h>
 
-#define width 720 // 1024
+#define width 720
 #define height 720
 #define sqSize 240
 
-int player_turn = 0; // BLUE PLAYER STARTS FIRST
-
+int player_turn = 1; // AI PLAYER STARTS FIRST
+                     
 int** initBoard(int** board) {
 
     for(int i = 0; i < 3; i++) {
@@ -36,27 +37,6 @@ void drawBoard(int** board) {
             }
         }
     }
-}
-
-int** playerTurn(int mouseOnBoard, int** board) {
-
-    int x = mouseOnBoard % 3;
-    int y = mouseOnBoard / 3;
-
-    if(player_turn == 0) {
-        if(board[x][y] == -1) {
-            board[x][y] = 0;
-            player_turn = 1;
-        }
-    } else {
-        if(board[x][y] == -1) {
-            board[x][y] = 1;
-            player_turn = 0;
-        }
-    }
-
-    return board;
-
 }
 
 // GAME OVER CHECKS
@@ -146,17 +126,17 @@ bool diag_check2(int** board, int player) {
 }
 
 // CHECK IF OVER
-bool checkIfOver(int** board, int player) {
+int checkIfOver(int** board, int player) {
     if(
             hori_check(board, player) ||
             veri_check(board, player) ||
             diag_check1(board, player) ||
             diag_check2(board, player)
       ) {
-        return true;
+        return player;
     }
 
-    return false;
+    return -1;
 
 }
 
@@ -172,6 +152,112 @@ void printBoard(int** board) {
 
 }
 
+int minimax(int** board, int depth, bool isMax) {
+
+    int resultO = checkIfOver(board, 0);
+    int resultX = checkIfOver(board, 1);
+
+    if(resultO == 0) {
+        return resultO;
+    } else if (resultX == 1) {
+        return resultX;
+    }
+
+
+    if(isMax == true) {
+
+        int bestScore = -1000;
+
+        for(int i = 0; i < 3; i++) {
+            for(int j = 0; j < 3; j++) {
+                if(board[i][j] == -1) {
+
+                    board[i][j] = 1;
+                    int score = minimax(board, depth + 1, false);
+                    board[i][j] = -1;
+
+                    if(score > bestScore) {
+                        bestScore = score;
+                    }
+
+                }
+            }
+        }
+
+        return bestScore;
+
+    } else {
+
+        int bestScore = 1000;
+
+        for(int i = 0; i < 3; i++) {
+            for(int j = 0; j < 3; j++) {
+                if(board[i][j] == -1) {
+
+                    board[i][j] = 0;
+                    int score = minimax(board, depth + 1, true);
+                    board[i][j] = -1;
+
+                    if(score < bestScore) {
+                        bestScore = score;
+                    }
+
+                }
+            }
+        }
+
+        return bestScore;
+
+    }
+
+}
+
+int** playerTurn(int mouseOnBoard, int** board) {
+
+    int x = mouseOnBoard % 3;
+    int y = mouseOnBoard / 3;
+
+    if(player_turn == 0) {
+
+        if(board[x][y] == -1) {
+            board[x][y] = 0;
+            player_turn = 1;
+        }
+
+    } else if(player_turn == 1) {
+
+        int bestScore = -1000;
+        int bestI = -1;
+        int bestJ = -1;
+
+        for(int i = 0; i < 3; i++) {
+            for(int j = 0; j < 3; j++) {
+                if(board[i][j] == -1) {
+
+                    board[i][j] = 1;
+                    int score = minimax(board, 0, false);
+                    board[i][j] = -1;
+
+                    if(score > bestScore) {
+                        bestScore = score;
+                        bestI = i;
+                        bestJ = j;
+                    }
+
+                }
+            }
+        }
+
+        board[bestI][bestJ] = 1;
+        player_turn = 0;
+
+    }
+
+    return board;
+
+}
+
+
 int main() {
 
     // ALLOCATE MEM
@@ -181,7 +267,7 @@ int main() {
         board[i] = (int*) malloc(sizeof(int) * 3);
     }
 
-    // INIT BOARD WITH ZEROES
+    // INIT BOARD WITH -1
     initBoard(board);
 
     // RAYLIB
@@ -189,19 +275,6 @@ int main() {
     SetTargetFPS(60);
 
     InitWindow(width, height, "TIC TAC TOE");
-
-    int diag_check_board[3][3] = {
-        {-1, -1, -1},
-        {-1, -1, -1},
-        {-1, -1, -1},
-    };
-
-    for(int i = 0; i < 3; i++) {
-        for(int j = 0; j < 3; j++) {
-            board[i][j] = diag_check_board[i][j];
-        }
-    }
-
     drawBoard(board);
 
     while(!WindowShouldClose()) {
@@ -210,16 +283,14 @@ int main() {
         int mouseY = GetMouseY() / sqSize;
         int mouseOnBoard = 3 * mouseY + mouseX;
 
-
         BeginDrawing();
 
-
-        if((checkIfOver(board, 1) || checkIfOver(board, 0)) == false) {
+        if((checkIfOver(board, 1) == -1) && (checkIfOver(board, 0) == -1)) {
             if(IsMouseButtonPressed(0)) {
                 board = playerTurn(mouseOnBoard, board);
                 drawBoard(board);
             }
-        }
+        } 
 
         EndDrawing();
 
