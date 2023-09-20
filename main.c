@@ -290,6 +290,10 @@ int main() {
                 board = playerTurn(mouseOnBoard, board);
                 drawBoard(board);
             }
+            if(player_turn == 1) {
+                board = playerTurn(mouseOnBoard, board);
+                drawBoard(board);
+            }
         } 
 
         EndDrawing();
