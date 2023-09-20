@@ -1,6 +1,12 @@
-# TIC TAC TOE
+# cbN
 
-![thumbnail](./thumbnail.png)
+<div align="center">
+
+![logo](./logo.png)
+
+</div>
+
+A Tic Tac Toe Game With A Bot
 
 ## QUICK START
 
@@ -12,3 +18,5 @@ Dependencies
 $ ./build.sh
 $ ./main
 ```
+
+![thumbnail](./thumbnail.png)
