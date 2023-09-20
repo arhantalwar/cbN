@@ -6,6 +6,8 @@
 
 </div>
 
+A Tic Tac Toe Game With A Bot
+
 ## QUICK START
 
 Dependencies
