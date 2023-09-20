@@ -1,19 +1,58 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <time.h>
+#include <raylib.h>
+
+#define width 1024
+#define height  720
+#define sqSize 240
+
+int player_turn = 0; // BLUE PLAYER STARTS FIRST
 
 int** initBoard(int** board) {
 
     for(int i = 0; i < 3; i++) {
         for(int j = 0; j < 3; j++) {
-            board[i][j] = ((float) rand() / (float) RAND_MAX) * 10.f;
+            board[i][j] = -1;
         }
     }
 
     return board;
 
 }
+
+void drawBoard(int** board) {
+    for(int i = 0; i < 3; i++) {
+        for(int j = 0; j < 3; j++) {
+            if(board[i][j] == -1) {
+                DrawRectangle(i * sqSize, j * sqSize, sqSize, sqSize, RAYWHITE);
+            } else if (board[i][j] == 0) {
+                DrawRectangle(i  * sqSize, j * sqSize, sqSize, sqSize, BLUE);
+            } else {
+                DrawRectangle(i * sqSize, j * sqSize, sqSize, sqSize, RED);
+            }
+        }
+    }
+}
+
+int** playerTurn(int mouseOnBoard, int** board) {
+
+    int x = mouseOnBoard % 3;
+    int y = mouseOnBoard / 3;
+
+    if(player_turn == 0) {
+        board[x][y] = 0;
+        player_turn = 1;
+    } else {
+        board[x][y] = 1;
+        player_turn = 0;
+    }
+
+    return board;
+
+}
+
+// GAME OVER CHECKS
 
 bool hori_check(int** board, int player) {
 
@@ -99,7 +138,6 @@ bool diag_check2(int** board, int player) {
 
 }
 
-
 void printBoard(int** board) {
 
     for(int i = 0; i < 3; i++) {
@@ -124,22 +162,16 @@ int main() {
     // INIT BOARD WITH ZEROES
     initBoard(board);
 
-    int hori_check_board[3][3] = {
-        {1, 1, 1},
-        {0, 0, 0},
-        {1, 1, 1},
-    };
+    // RAYLIB
+    SetTraceLogLevel(LOG_WARNING);
+    SetTargetFPS(60);
 
-    int veri_check_board[3][3] = {
-        {1, 1, 0},
-        {0, 1, 0},
-        {0, 1, 0},
-    };
+    InitWindow(width, height, "TIC TAC TOE");
 
     int diag_check_board[3][3] = {
-        {1, 0, 1},
-        {0, 0, 0},
-        {1, 0, 1},
+        {-1, -1, -1},
+        {-1, -1, -1},
+        {-1, -1, -1},
     };
 
     for(int i = 0; i < 3; i++) {
@@ -148,11 +180,27 @@ int main() {
         }
     }
 
-    bool hori_check_ans = hori_check(board, 1);
-    bool veri_check_ans = veri_check(board, 1);
-    bool diag_check_ans = diag_check2(board, 1);
+    drawBoard(board);
 
-    printf("%d\n", diag_check_ans);
+    while(!WindowShouldClose()) {
+
+        int mouseX = GetMouseX() / sqSize;
+        int mouseY = GetMouseY() / sqSize;
+        int mouseOnBoard = 3 * mouseY + mouseX;
+
+
+        BeginDrawing();
+
+        if(IsMouseButtonPressed(0)) {
+            board = playerTurn(mouseOnBoard, board);
+            drawBoard(board);
+        }
+
+        EndDrawing();
+
+    }
+
+    CloseWindow();
 
     // FREE THE MEM
     for(int i = 0; i < 3; i++) {
